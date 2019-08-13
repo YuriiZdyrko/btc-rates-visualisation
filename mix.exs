@@ -10,7 +10,7 @@ defmodule Rates.Umbrella.MixProject do
       releases: [
         demo: [
           include_executables_for: [:unix],
-          applications: [runtime_tools: :permanent]
+          applications: [runtime_tools: :permanent, rates_web: :permanent]
         ]
       ]
     ]
