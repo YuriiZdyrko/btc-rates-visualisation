@@ -1,0 +1,47 @@
+# Alias this container as builder:
+FROM bitwalker/alpine-elixir-phoenix as builder
+
+WORKDIR /rates
+
+ENV MIX_ENV=prod
+
+# Umbrella
+# Copy mix files so we use distillery:
+COPY mix.exs mix.lock ./
+COPY config config
+
+COPY apps apps
+
+RUN mix do deps.get, deps.compile
+
+# Build assets in production mode:
+WORKDIR /rates/apps/rates_web/assets
+RUN npm install && npm run deploy
+
+WORKDIR /rates/apps/rates_web
+RUN mix phx.digest
+
+WORKDIR /rates
+RUN mix release demo
+
+### Release
+
+FROM alpine:3.10
+
+RUN apk upgrade --no-cache && \
+  apk add --no-cache bash openssl
+
+EXPOSE 4000
+
+ENV PORT=4000 \
+  MIX_ENV=prod \
+  REPLACE_OS_VARS=true \
+  SHELL=/bin/bash
+
+WORKDIR /rates
+
+COPY --from=builder /rates/_build/prod/rel/demo .
+
+USER root
+
+CMD ["./bin/demo", "start"]
