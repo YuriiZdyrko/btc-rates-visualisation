@@ -19,8 +19,9 @@ defmodule RatesWeb.Router do
     get "/", PageController, :index
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", RatesWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", RatesWeb do
+    pipe_through :api
+
+    get "/rates", RatesController, :index
+  end
 end

@@ -1,4 +1,7 @@
 defmodule Rates do
+
+  alias Rates.Service
+
   @moduledoc """
   Rates keeps the contexts that define your domain
   and business logic.

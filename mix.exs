@@ -10,7 +10,10 @@ defmodule Rates.Umbrella.MixProject do
       releases: [
         demo: [
           include_executables_for: [:unix],
-          applications: [runtime_tools: :permanent, rates_web: :permanent]
+          applications: [
+            runtime_tools: :permanent,
+            rates_web: :permanent
+          ]
         ]
       ]
     ]
@@ -29,6 +32,11 @@ defmodule Rates.Umbrella.MixProject do
   # Dependencies listed here are available only for this project
   # and cannot be accessed from applications inside the apps folder
   defp deps do
-    []
+    [
+      {:dialyxir, ">= 1.0.0-rc.6", only: [:dev], runtime: false},
+      {:ex_unit_notifier, "~> 0.1", only: [:dev, :test], runtime: false},
+      {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
+      {:ex_doc, "~> 0.14", only: [:dev], runtime: false}
+    ]
   end
 end
