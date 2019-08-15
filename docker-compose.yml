@@ -6,27 +6,24 @@ services:
     restart: always
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_USER: postgres
-      POSTGRES_DB: rates_prod
 
   web:
-    build: .
-    volumes:
-      - type: bind
-        source: .
-        target: /app
+    build:
+      context: .
     ports:
       - "4000:4000"
     depends_on:
       - db
-    depends_on:
-      - migration
-  migration:
-    build: .
-    command: /app/bin/demo eval Rates.ReleaseTasks.migrate()
-    volumes:
-      - /app
     links:
       - db
-    depends_on:
-      - db
+    command: /rates/bin/demo eval Rates.ReleaseTasks.migrate()
+
+  # migration:
+  #   build: .
+  #   command: /app/bin/demo eval Rates.ReleaseTasks.migrate()
+  #   volumes:
+  #     - /app
+  #   links:
+  #     - db
+  #   depends_on:
+  #     - db
