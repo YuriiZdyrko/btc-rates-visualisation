@@ -20,13 +20,6 @@ variables:
     - mix deps.get
     - mix deps.clean --unused
 
-.node: &node
-  image: node:12.8.1
-  before_script:
-    - cd apps/rates_web/assets/
-    - node --version
-    - npm install
-
 # TASKS
 compile:elixir:
   <<: *elixir
