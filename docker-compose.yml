@@ -16,7 +16,7 @@ services:
       - db
     links:
       - db
-    command: /rates/bin/demo eval Rates.ReleaseTasks.migrate()
+    # command: /rates/bin/demo eval Rates.ReleaseTasks.migrate()
 
   # migration:
   #   build: .

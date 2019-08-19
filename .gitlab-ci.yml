@@ -1,0 +1,101 @@
+stages:
+  - compile
+  - test
+  - build
+  - deploy
+  - notify
+
+variables:
+  POSTGRES_HOST: postgres
+  POSTGRES_DB: rates_test
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: ""
+
+.elixir: &elixir
+  image: elixir
+  before_script:
+    - elixir --version
+    - mix --version
+    - mix do local.hex --force, local.rebar --force
+    - mix deps.get
+    - mix deps.clean --unused
+
+.node: &node
+  image: node:12.8.1
+  before_script:
+    - cd apps/rates_web/assets/
+    - node --version
+    - npm install
+
+# TASKS
+compile:elixir:
+  <<: *elixir
+  stage: compile
+  script:
+    - mix compile --warnings-as-errors
+
+compile:plt:
+  <<: *elixir
+  stage: compile
+  script:
+    - mix dialyzer --plt
+
+## Lint
+lint:elixir:
+  <<: *elixir
+  stage: compile
+  script:
+    - mix format --check-formatted
+
+lint:node:
+  <<: *node
+  stage: compile
+  script:
+    - yarn lint
+
+## Test
+test:exunit:
+  <<: *elixir
+  stage: test
+  services:
+    - postgres:9.6
+  script:
+    - mix test --cover --color
+  artifacts:
+    paths:
+      - cover/
+    expire_in: '1 month'
+
+test:credo:
+  <<: *elixir
+  stage: test
+  script:
+    - mix credo
+
+test:dialyxir:
+  <<: *elixir
+  stage: test
+  script:
+    - mix dialyzer
+  allow_failure: true
+
+build:
+  image: docker:git
+  variables:
+    DOCKER_DRIVER: overlay_fs
+  stage: build
+  before_script:
+    - docker version
+  script:
+    - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
+    - docker build --pull -t "1med/onemedical:$(git describe)" .
+    - docker tag "1med/onemedical:$(git describe)" 1med/onemedical:latest
+    - docker push "1med/onemedical:$(git describe)"
+    - docker push 1med/onemedical:latest
+    - docker image save -o rates-release.tar "1med/onemedical:$(git describe)"
+  only:
+    - master
+  artifacts:
+    paths:
+      - onemedical-staging.tar
+    expire_in: '1 week'

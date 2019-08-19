@@ -44,4 +44,4 @@ COPY --from=builder /rates/_build/prod/rel/demo .
 
 USER root
 
-CMD ["./bin/demo", "start"]
+ENTRYPOINT ["./bin/demo"]
