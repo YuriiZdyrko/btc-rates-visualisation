@@ -15,6 +15,6 @@ defmodule Rates.ReleaseTasks do
   end
 
   defp seed do
-    Code.eval_file Path.join([:code.priv_dir(Rates), "repo", "seeds.exs"])
+    Code.eval_file(Path.join([:code.priv_dir(Rates), "repo", "seeds.exs"]))
   end
 end
