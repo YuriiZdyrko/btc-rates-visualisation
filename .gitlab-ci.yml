@@ -2,8 +2,6 @@ stages:
   - compile
   - test
   - build
-  - deploy
-  - notify
 
 variables:
   POSTGRES_HOST: postgres
