@@ -1,4 +1,8 @@
 defmodule Rates.ReleaseTasks do
+  @moduledoc """
+  These tasks are run on CI server
+  """
+
   def migrate() do
     Application.load(:rates_web)
 
