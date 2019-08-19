@@ -47,12 +47,6 @@ lint:elixir:
   script:
     - mix format --check-formatted
 
-lint:node:
-  <<: *node
-  stage: compile
-  script:
-    - yarn lint
-
 ## Test
 test:exunit:
   <<: *elixir
@@ -88,14 +82,12 @@ build:
     - docker version
   script:
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-    - docker build --pull -t "1med/onemedical:$(git describe)" .
-    - docker tag "1med/onemedical:$(git describe)" 1med/onemedical:latest
-    - docker push "1med/onemedical:$(git describe)"
-    - docker push 1med/onemedical:latest
-    - docker image save -o rates-release.tar "1med/onemedical:$(git describe)"
+    - docker build --pull -t "banzay/rates" .
+    - docker push banzay/rates:latest
+    - docker image save -o rates-release.tar "banzay/rates"
   only:
     - master
   artifacts:
     paths:
-      - onemedical-staging.tar
-    expire_in: '1 week'
+      - rates-release.tar
+    expire_in: '1 month'

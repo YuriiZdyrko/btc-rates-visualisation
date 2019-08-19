@@ -1,4 +1,8 @@
 defmodule Rates.ReleaseTasks do
+  @moduledoc """
+  Executed during `mix release`
+  """
+
   def migrate() do
     Application.load(:rates_web)
 
