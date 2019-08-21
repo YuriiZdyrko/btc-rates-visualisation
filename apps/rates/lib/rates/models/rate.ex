@@ -5,12 +5,12 @@ defmodule Rates.Models.Rate do
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
-  @derive {Jason.Encoder,
-           only: [
-             :id,
-             :refreshed_at,
-             :price_usd
-           ]}
+  # @derive {Jason.Encoder,
+  #          only: [
+  #            :id,
+  #            :refreshed_at,
+  #            :price_usd
+  #          ]}
 
   schema "rates" do
     field(:refreshed_at, :utc_datetime)

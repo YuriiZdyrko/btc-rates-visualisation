@@ -9,29 +9,11 @@ defmodule Rates.DataGetter do
   alias Rates.Models.Rate
   alias Rates.Models.Currency
 
-  # def get(range) do
-  #   since = Timex.shift(Timex.now(), seconds: -range)
-  #   till = Timex.now()
-  #
-  #   Rate
-  #   |> where([r], fragment(
-  #     "? BETWEEN ? AND ?",
-  #     r.refreshed_at,
-  #     ^since,
-  #     ^till
-  #   ))
-  #   |> Repo.all()
-  # end
-
-  # def test do
-  #   get_chart(3600, "minute")
-  # end
-
   @spec get_chart(number, string) :: []
-  def get_chart(duration, x_unit)
+  def get_chart(duration, unit)
       when is_integer(duration) and
              duration > 0 and
-             x_unit in ["second", "minute", "hour"] do
+             unit in ["second", "minute", "hour"] do
     now = Timex.now()
 
     series_start =
@@ -52,7 +34,7 @@ defmodule Rates.DataGetter do
         SELECT id, price_usd, refreshed_at from rates WHERE rates.currency_id = c.id and refreshed_at < series ORDER BY rates.refreshed_at DESC LIMIT 1
       ) r ON true
       GROUP BY series",
-        [series_start, series_end, x_unit]
+        [series_start, series_end, unit]
       )
 
     %Postgrex.Result{
