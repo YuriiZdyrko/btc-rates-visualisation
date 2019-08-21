@@ -9,7 +9,7 @@
           type="radio"
           name="duration"
           v-model="duration"
-          value="60"
+          value="1min"
           @change="handleDurationChange"
         />
       </li>
@@ -20,7 +20,7 @@
           type="radio"
           name="duration"
           v-model="duration"
-          value="3600"
+          value="1hr"
           @change="handleDurationChange"
         />
       </li>
@@ -31,7 +31,7 @@
           type="radio"
           name="duration"
           v-model="duration"
-          value="86400"
+          value="24hr"
           @change="handleDurationChange"
         />
       </li>
@@ -50,6 +50,7 @@
 
 <script>
 const REFRESH_RATE = 100000 // msec
+import moment from 'moment'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
 export default {
@@ -58,10 +59,14 @@ export default {
     PulseLoader
   },
   data: function () {
+    const till = moment()
+
     return {
+      since: till.clone().subtract(1, 'minutes'),
+      till,
+      unit: 'second',
       isLoading: null,
       duration: 60,
-      unit: 'second',
       chartData: null,
       chartOptions: {
         height: 800,
@@ -110,7 +115,13 @@ export default {
         });
     },
     fetch: function() {
-      return this.$http.get('/api/rates', {params: {duration: this.duration, unit: this.unit}})
+      return this.$http.get('/api/rates', {
+        params: {
+          unit: this.unit,
+          since: this.since.toISOString(),
+          till: this.till.toISOString()
+        }
+      })
     },
     preparePrices: function(prices) {
       return prices.map(([date, ...prices]) => {
@@ -122,15 +133,21 @@ export default {
     },
     handleDurationChange: function() {
       clearTimeout(this.timeout)
+      const till = moment()
+      this.till = till
       switch (this.duration) {
-        case '60':
-          this.unit = 'second';
+        case '1min':
+          this.unit = 'second'
+          this.since = till.clone().subtract(1, 'minutes')
           break;
-        case '3600':
-          this.unit = 'minute';
+        case '1hr':
+          debugger;
+          this.unit = 'minute'
+          this.since = till.clone().subtract(1, 'hours')
           break;
-        case '86400':
-          this.unit = 'hour';
+        case '24hr':
+          this.unit = 'hour'
+          this.since = till.clone().subtract(24, 'hours')
           break;
       }
       this.rebuildChart()

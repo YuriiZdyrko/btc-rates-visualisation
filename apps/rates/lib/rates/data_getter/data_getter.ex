@@ -9,21 +9,17 @@ defmodule Rates.DataGetter do
   alias Rates.Models.Rate
   alias Rates.Models.Currency
 
-  @spec get_chart(number, string) :: []
-  def get_chart(duration, unit)
-      when is_integer(duration) and
-             duration > 0 and
-             unit in ["second", "minute", "hour"] do
-    now = Timex.now()
+  @spec get_chart(any(), any(), string) :: []
+  def get_chart(since, till, unit)
+      when since < till and unit in ["second", "minute", "hour"] do
+    # series_start =
+    #   now
+    #   |> Timex.shift(seconds: -duration)
+    #   |> DateTime.to_naive()
 
-    series_start =
-      now
-      |> Timex.shift(seconds: -duration)
-      |> DateTime.to_naive()
-
-    series_end =
-      now
-      |> DateTime.to_naive()
+    # series_end =
+    #   now
+    #   |> DateTime.to_naive()
 
     prices_query_result =
       Ecto.Adapters.SQL.query!(
@@ -34,7 +30,7 @@ defmodule Rates.DataGetter do
         SELECT id, price_usd, refreshed_at from rates WHERE rates.currency_id = c.id and refreshed_at < series ORDER BY rates.refreshed_at DESC LIMIT 1
       ) r ON true
       GROUP BY series",
-        [series_start, series_end, unit]
+        [since, till, unit]
       )
 
     %Postgrex.Result{

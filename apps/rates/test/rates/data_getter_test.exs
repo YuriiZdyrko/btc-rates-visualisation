@@ -49,7 +49,7 @@ defmodule Rates.DataGetterTest do
     assert %{
               currencies: ["Bitcoin", "Ethereum"],
               prices: prices
-            } = Rates.DataGetter.get_chart(84600, "hour")
+            } = Rates.DataGetter.get_chart("asdf", "fdsa", "hour")
 
     assert length(prices) == 61
 
