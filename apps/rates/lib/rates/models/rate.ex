@@ -5,17 +5,18 @@ defmodule Rates.Models.Rate do
 
   @primary_key {:id, :binary_id, autogenerate: true}
 
-  @derive {Jason.Encoder, only: [
-    :id,
-    :refreshed_at,
-    :price_usd
-  ]}
+  @derive {Jason.Encoder,
+           only: [
+             :id,
+             :refreshed_at,
+             :price_usd
+           ]}
 
   schema "rates" do
-    field :refreshed_at, :utc_datetime
-    field :price_usd, :decimal
+    field(:refreshed_at, :utc_datetime)
+    field(:price_usd, :decimal)
 
-    belongs_to :currency, Rates.Models.Currency, type: :string
+    belongs_to(:currency, Rates.Models.Currency, type: :string)
     timestamps()
   end
 

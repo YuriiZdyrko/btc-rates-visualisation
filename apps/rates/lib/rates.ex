@@ -1,5 +1,4 @@
 defmodule Rates do
-
   alias Rates.Service
 
   @moduledoc """

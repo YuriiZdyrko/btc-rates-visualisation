@@ -6,8 +6,8 @@ defmodule Rates.Models.Currency do
   @primary_key {:id, :string, autogenerate: false}
 
   schema "currencies" do
-    field :name, :string
-    field :symbol, :string
+    field(:name, :string)
+    field(:symbol, :string)
 
     timestamps()
   end

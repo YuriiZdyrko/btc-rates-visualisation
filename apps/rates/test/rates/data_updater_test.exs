@@ -7,13 +7,13 @@ defmodule Rates.DataUpdaterTest do
 
   @mock_response_body [
     _new_currency_new_rate = %{
-       "id" => "cosmos",
-       "name" => "Cosmos",
-       "symbol" => "ATOM",
-       "price_usd" => "2.22222",
-       "last_updated" => "1566314049"
-   },
-  _new_currency_new_rate = %{
+      "id" => "cosmos",
+      "name" => "Cosmos",
+      "symbol" => "ATOM",
+      "price_usd" => "2.22222",
+      "last_updated" => "1566314049"
+    },
+    _new_currency_new_rate = %{
       "id" => "btc",
       "name" => "Bitcoin",
       "symbol" => "BTC",
@@ -21,13 +21,13 @@ defmodule Rates.DataUpdaterTest do
       "last_updated" => "1566314043"
     },
     _existing_currency_new_rate_ = %{
-       "id" => "cosmos",
-       "name" => "Cosmos",
-       "symbol" => "ATOM",
-       "price_usd" => "3.33333",
-       "last_updated" => "156634444"
-   },
-   _existing_currency_existing_rate = %{
+      "id" => "cosmos",
+      "name" => "Cosmos",
+      "symbol" => "ATOM",
+      "price_usd" => "3.33333",
+      "last_updated" => "156634444"
+    },
+    _existing_currency_existing_rate = %{
       "id" => "btc",
       "name" => "Bitcoin",
       "symbol" => "BTC",

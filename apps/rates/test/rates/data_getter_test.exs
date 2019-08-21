@@ -6,6 +6,5 @@ defmodule Rates.DataGetterTest do
   alias Rates.Models.Currency
 
   def get(unit) do
-
   end
 end
