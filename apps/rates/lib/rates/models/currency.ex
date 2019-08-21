@@ -11,9 +11,4 @@ defmodule Rates.Models.Currency do
 
     timestamps()
   end
-
-  # def changeset(params) do
-  #   %__MODULE__{}
-  #   |> cast(params, [:id, :name, :symbol])
-  # end
 end

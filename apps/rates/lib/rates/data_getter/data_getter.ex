@@ -1,6 +1,6 @@
 defmodule Rates.DataGetter do
   @moduledoc """
-  Gets rates from database, filtered by range parameter
+  Gets prices chart data from database
   """
 
   import Ecto.Query
@@ -12,24 +12,20 @@ defmodule Rates.DataGetter do
   @spec get_chart(any(), any(), string) :: []
   def get_chart(since, till, unit)
       when since < till and unit in ["second", "minute", "hour"] do
-    # series_start =
-    #   now
-    #   |> Timex.shift(seconds: -duration)
-    #   |> DateTime.to_naive()
-
-    # series_end =
-    #   now
-    #   |> DateTime.to_naive()
+    prices_query = """
+      SELECT series::timestamp at time zone 'Etc/UTC', array_agg(r.price_usd ORDER BY c.name ASC) FROM
+        (SELECT id, name from currencies) c
+          CROSS JOIN generate_series($1::timestamp, $2::timestamp, ('1 ' || $3)::interval) series
+            LEFT JOIN LATERAL (
+              SELECT id, price_usd, refreshed_at from rates WHERE rates.currency_id = c.id and refreshed_at <= series ORDER BY rates.refreshed_at DESC LIMIT 1
+            ) r ON true
+      GROUP BY series
+    """
 
     prices_query_result =
       Ecto.Adapters.SQL.query!(
         Rates.Repo,
-        "SELECT series, array_agg(r.price_usd ORDER BY c.name ASC) FROM (SELECT id, name from currencies) c
-      CROSS JOIN generate_series($1::timestamp, $2::timestamp, ('1 ' || $3)::interval) series
-      LEFT JOIN LATERAL (
-        SELECT id, price_usd, refreshed_at from rates WHERE rates.currency_id = c.id and refreshed_at < series ORDER BY rates.refreshed_at DESC LIMIT 1
-      ) r ON true
-      GROUP BY series",
+        prices_query,
         [since, till, unit]
       )
 

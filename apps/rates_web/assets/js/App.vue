@@ -1,55 +1,29 @@
 <template>
-  <div id="app">
-    <!-- <router-view></router-view> -->
-    <ul class="DurationPicker">
-      <li>
-        <label for="duration-day">Past Minute</label>
-        <input
-          id="duration-day"
-          type="radio"
-          name="duration"
-          v-model="duration"
-          value="1min"
-          @change="handleDurationChange"
-        />
-      </li>
-      <li>
-        <label for="duration-hour">Past Hour</label>
-        <input
-          id="duration-hour"
-          type="radio"
-          name="duration"
-          v-model="duration"
-          value="1hr"
-          @change="handleDurationChange"
-        />
-      </li>
-      <li>
-        <label for="duration-24">Past 24 Hours</label>
-        <input
-          id="duration-24"
-          type="radio"
-          name="duration"
-          v-model="duration"
-          value="24hr"
-          @change="handleDurationChange"
-        />
-      </li>
-    </ul>
+<div id="app">
+  <!-- <router-view></router-view> -->
+  <ul class="DurationPicker">
+    <li>
+      <label for="duration-day">Past Minute</label>
+      <input id="duration-day" type="radio" name="duration" v-model="duration" value="1min" @change="triggerRebuild" />
+    </li>
+    <li>
+      <label for="duration-hour">Past Hour</label>
+      <input id="duration-hour" type="radio" name="duration" v-model="duration" value="1hr" @change="triggerRebuild" />
+    </li>
+    <li>
+      <label for="duration-24">Past 24 Hours</label>
+      <input id="duration-24" type="radio" name="duration" v-model="duration" value="24hr" @change="triggerRebuild" />
+    </li>
+  </ul>
 
-    <pulse-loader :loading="isLoading"></pulse-loader>
-    <div>
-      <GChart
-        type="LineChart"
-        :data="chartData"
-        :options="chartOptions"
-      />
-    </div>
+  <pulse-loader class="Loader" :loading="isLoading"></pulse-loader>
+  <div>
+    <GChart type="LineChart" :data="chartData" :options="CHART_OPTIONS" />
   </div>
+</div>
 </template>
 
 <script>
-const REFRESH_RATE = 100000 // msec
 import moment from 'moment'
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue'
 
@@ -58,90 +32,51 @@ export default {
   components: {
     PulseLoader
   },
-  data: function () {
+  data: function() {
     const till = moment()
 
     return {
-      since: till.clone().subtract(1, 'minutes'),
-      till,
       unit: 'second',
       isLoading: null,
-      duration: 60,
+      duration: '1min',
+      REFRESH_RATE: 1000,
       chartData: null,
-      chartOptions: {
-        height: 800,
+      CHART_OPTIONS: {
+        height: 600,
         curveType: 'function',
         hAxis: {
           format: 'hh:mm:ss',
-          gridlines: {count: 15}
+          gridlines: {
+            count: 15
+          }
         },
         vAxis: {
-          gridlines: {color: 'none'},
+          gridlines: {
+            color: 'none'
+          },
           minValue: 0,
           scaleType: 'log'
         }
       }
     }
   },
-  created: function () {
-    this.rebuildChart()
+  created: function() {
+    this.triggerRebuild()
   },
-  beforeDestroy () {
+  beforeDestroy() {
     clearTimeout(this.timeout)
   },
   methods: {
-    rebuildChart: function() {
-      this.isLoading = true
-      this.fetch()
-        .then(response => {
-          const prices = this.preparePrices(response.body.prices)
-
-          this.chartData = [
-            ['Date', ...response.body.currencies],
-            ...prices
-          ]
-
-          console.info('Applying new chartData:')
-          console.info(this.chartData)
-
-          this.timeout = setTimeout(() => {
-            this.rebuildChart()
-          }, REFRESH_RATE);
-        }, response => {
-          alert('chart data failed to load');
-        })
-        .finally(() => {
-          this.isLoading = false
-        });
-    },
-    fetch: function() {
-      return this.$http.get('/api/rates', {
-        params: {
-          unit: this.unit,
-          since: this.since.toISOString(),
-          till: this.till.toISOString()
-        }
-      })
-    },
-    preparePrices: function(prices) {
-      return prices.map(([date, ...prices]) => {
-        return [
-          new Date(date),
-          ...prices.map(price => price && parseFloat(price))
-        ]
-      })
-    },
-    handleDurationChange: function() {
+    triggerRebuild: function() {
       clearTimeout(this.timeout)
       const till = moment()
-      this.till = till
+      this.till = till.clone()
       switch (this.duration) {
         case '1min':
           this.unit = 'second'
           this.since = till.clone().subtract(1, 'minutes')
           break;
         case '1hr':
-          debugger;
           this.unit = 'minute'
           this.since = till.clone().subtract(1, 'hours')
           break;
@@ -150,7 +85,48 @@ export default {
           this.since = till.clone().subtract(24, 'hours')
           break;
       }
-      this.rebuildChart()
+      this.rebuild()
+    },
+    rebuild: function() {
+      this.isLoading = true
+
+      this.fetchChartData()
+        .then(response => {
+          this.chartData = this.prepareChartData(response)
+          console.info('Applying new chartData:')
+          console.info(this.chartData)
+        }, response => {
+          console.error('Chart data failed to load');
+          console.error(response)
+        })
+        .finally(() => {
+          this.timeout = setTimeout(() => {
+            this.triggerRebuild()
+          }, this.REFRESH_RATE);
+          this.isLoading = false
+        });
+    },
+    fetchChartData: function() {
+      return this.$http.get('/api/rates', {
+        params: {
+          unit: this.unit,
+          since: this.since.toISOString(),
+          till: this.till.toISOString()
+        }
+      })
+    },
+    prepareChartData: function(response) {
+      const prices = response.body.prices.map(([date, ...prices]) => {
+        return [
+          new Date(date),
+          ...prices.map(price => price && parseFloat(price))
+        ]
+      })
+
+      return [
+        ['Date', ...response.body.currencies],
+        ...prices
+      ]
     }
   }
 }
@@ -159,65 +135,18 @@ export default {
 <style scoped>
 .DurationPicker {
   list-style-type: none;
+  margin: 0;
 }
+
 .DurationPicker li {
   display: inline-block;
   margin-right: 20px;
 }
 
-.lds-heart {
-  display: inline-block;
-  position: relative;
-  width: 64px;
-  height: 64px;
-  transform: rotate(45deg);
-  transform-origin: 32px 32px;
+.Loader {
+  position: fixed;
+  z-index: 100;
+  top: 5px;
+  right: 40px;
 }
-.lds-heart div {
-  top: 23px;
-  left: 19px;
-  position: absolute;
-  width: 26px;
-  height: 26px;
-  background: #fff;
-  animation: lds-heart 1.2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
-}
-.lds-heart div:after,
-.lds-heart div:before {
-  content: " ";
-  position: absolute;
-  display: block;
-  width: 26px;
-  height: 26px;
-  background: #fff;
-}
-.lds-heart div:before {
-  left: -17px;
-  border-radius: 50% 0 0 50%;
-}
-.lds-heart div:after {
-  top: -17px;
-  border-radius: 50% 50% 0 0;
-}
-@keyframes lds-heart {
-  0% {
-    transform: scale(0.95);
-  }
-  5% {
-    transform: scale(1.1);
-  }
-  39% {
-    transform: scale(0.85);
-  }
-  45% {
-    transform: scale(1);
-  }
-  60% {
-    transform: scale(0.95);
-  }
-  100% {
-    transform: scale(0.9);
-  }
-}
-
 </style>
