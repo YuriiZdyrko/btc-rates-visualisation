@@ -6,5 +6,7 @@
 ---
 minikube start
 kubectl -n rates create -f ./k8s/rates-deployment.yaml
+kubectl config set-context --current --namespace=rates
+kubectl expose deployment rates-deployment --type=LoadBalancer --port=4000
 
 kubectl -n rates get pods

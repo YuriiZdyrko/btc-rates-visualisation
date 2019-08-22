@@ -21,26 +21,13 @@ spec:
           image: banzay/rates
           ports:
             - containerPort: 4000
-          args: ["foreground"]
+          args: ["start"]
           livenessProbe:
             httpGet:
               path: /api/health
               port: 4000
             initialDelaySeconds: 60
             periodSeconds: 15
-          env:
-            # - name: HOST
-            #   value: "example.com"
-            # - name: SECRET_KEY_BASE
-            #   value: "highlysecretkey"
-            - name: POSTGRES_USER
-              value: "postgres"
-            - name: POSTGRES_PASSWORD
-              value: "postgres"
-            - name: POSTGRES_DB
-              value: "rates_prod"
-            - name: POSTGRES_HOST
-              value: "postgres"
 ---
 apiVersion: v1
 kind: Service
@@ -65,9 +52,9 @@ spec:
       containers:
       - image: "postgres:10.1"
         name: postgres
-        # envFrom:
-        # - configMapRef:
-        #     name: example-config
+        env:
+        - name: POSTGRES_PASSWORD
+          value: "postgres"
         ports:
         - containerPort: 5432
           name: postgres
