@@ -9,5 +9,5 @@ config :rates, Rates.Repo,
   username: "postgres",
   password: "postgres",
   database: "rates_dev",
-  hostname: "localhost",
+  hostname: "BLAH",
   pool_size: 10
