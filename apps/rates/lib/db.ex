@@ -3,7 +3,7 @@ defmodule Rates.DB do
   Creates and migrates database on application start.
   """
 
-  use Task, restart: :permanent
+  use Task
 
   alias Rates.Repo
 

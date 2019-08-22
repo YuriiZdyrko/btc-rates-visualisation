@@ -7,6 +7,7 @@ defmodule Rates.Umbrella.MixProject do
       apps_path: "apps",
       start_permanent: Mix.env() == :prod,
       deps: deps(),
+      aliases: aliases(),
       releases: [
         demo: [
           include_executables_for: [:unix],
@@ -37,6 +38,13 @@ defmodule Rates.Umbrella.MixProject do
       {:ex_unit_notifier, "~> 0.1", only: [:dev, :test], runtime: false},
       {:credo, "~> 1.1", only: [:dev, :test], runtime: false},
       {:ex_doc, "~> 0.14", only: [:dev], runtime: false}
+    ]
+  end
+
+  defp aliases do
+    ["ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
+     "ecto.reset": ["ecto.drop", "ecto.setup"],
+     "test": ["ecto.create --quiet", "ecto.migrate", "test"]
     ]
   end
 end

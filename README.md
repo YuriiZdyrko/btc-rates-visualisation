@@ -5,4 +5,6 @@
 
 ---
 minikube start
-kubectl create -f ./k8s/rates-deployment.yaml
+kubectl -n rates create -f ./k8s/rates-deployment.yaml
+
+kubectl -n rates get pods
