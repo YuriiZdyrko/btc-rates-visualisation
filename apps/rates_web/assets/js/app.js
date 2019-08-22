@@ -11,7 +11,19 @@ import css from "../css/app.css"
 //
 import "phoenix_html"
 
-// Import local files
-//
-// Local files can be imported directly using relative paths, for example:
-// import socket from "./socket"
+import App from './App.vue'
+
+import Vue from 'vue'
+import VueResource from 'vue-resource'
+import VueGoogleCharts from 'vue-google-charts'
+
+Vue.use(VueResource)
+Vue.use(VueGoogleCharts)
+Vue.component('app', App)
+
+/* eslint-disable no-new */
+new Vue({
+  el: '#app',
+  render: h => h(App),
+  components: { App }
+})

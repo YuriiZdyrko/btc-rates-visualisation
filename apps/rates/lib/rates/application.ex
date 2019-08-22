@@ -7,7 +7,9 @@ defmodule Rates.Application do
 
   def start(_type, _args) do
     children = [
-      Rates.Repo
+      Rates.DB,
+      Rates.Repo,
+      Rates.Scheduler
     ]
 
     Supervisor.start_link(children, strategy: :one_for_one, name: Rates.Supervisor)

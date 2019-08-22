@@ -37,7 +37,11 @@ defmodule Rates.MixProject do
   defp deps do
     [
       {:ecto_sql, "~> 3.0"},
-      {:postgrex, ">= 0.0.0"}
+      {:postgrex, ">= 0.0.0"},
+      {:jason, "~> 1.1"},
+      {:tesla, "~> 1.2.1"},
+      {:quantum, "~> 2.3"},
+      {:timex, "~> 3.0"}
     ]
   end
 
