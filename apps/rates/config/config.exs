@@ -11,7 +11,7 @@ config :rates,
 config :rates, Rates.Scheduler,
   jobs: [
     # Every minute
-    {"* * * * *", {Rates.DataUpdater, :update, []}}
+    {"*/2 * * * *", {Rates.DataUpdater, :update, []}}
   ]
 
 import_config "#{Mix.env()}.exs"

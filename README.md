@@ -5,8 +5,9 @@
 
 ---
 minikube start
-kubectl -n rates create -f ./k8s/rates-deployment.yaml
-kubectl config set-context --current --namespace=rates
-kubectl expose deployment rates-deployment --type=LoadBalancer --port=4000
+kubectl create -f ./k8s/rates-deployment.yaml
+kubectl expose deployment rates-deployment --type=NodePort --port=4000
+minikube service rates-deployment --url
 
-kubectl -n rates get pods
+kubectl get pods
+kubectl logs -f POD_ID -c rates
