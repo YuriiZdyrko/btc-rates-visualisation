@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: rates
-          image: rates
+          image: banzay/rates
           ports:
             - containerPort: 4000
           args: ["foreground"]
