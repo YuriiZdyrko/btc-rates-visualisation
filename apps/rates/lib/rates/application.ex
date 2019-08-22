@@ -7,6 +7,7 @@ defmodule Rates.Application do
 
   def start(_type, _args) do
     children = [
+      Rates.DB,
       Rates.Repo,
       Rates.Scheduler
     ]
