@@ -23,5 +23,6 @@ defmodule RatesWeb.Router do
     pipe_through(:api)
 
     get("/rates", RatesController, :index)
+    get("/health-check", HealthCheckController, :index)
   end
 end

@@ -1,4 +1,8 @@
 defmodule Rates.Models.Rate do
+  @moduledoc """
+  Blockchain currency rate
+  """
+
   use Ecto.Schema
 
   @primary_key {:id, :binary_id, autogenerate: true}
