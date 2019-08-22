@@ -6,19 +6,29 @@ defmodule Rates.DataGetter do
   import Ecto.Query
 
   alias Rates.Repo
-  alias Rates.Models.Rate
   alias Rates.Models.Currency
 
-  @spec get_chart(any(), any(), string) :: []
+  @spec get_chart(any(), any(), String.t()) :: []
   def get_chart(since, till, unit)
       when since < till and unit in ["second", "minute", "hour"] do
     prices_query = """
-      SELECT series::timestamp at time zone 'Etc/UTC', array_agg(r.price_usd ORDER BY c.name ASC) FROM
-        (SELECT id, name from currencies) c
-          CROSS JOIN generate_series($1::timestamp, $2::timestamp, ('1 ' || $3)::interval) series
-            LEFT JOIN LATERAL (
-              SELECT id, price_usd, refreshed_at from rates WHERE rates.currency_id = c.id and refreshed_at <= series ORDER BY rates.refreshed_at DESC LIMIT 1
-            ) r ON true
+      SELECT
+        series::timestamp at time zone 'Etc/UTC',
+        array_agg(rates.price_usd ORDER BY c.name ASC)
+      FROM
+        (SELECT id, name FROM currencies) c
+        CROSS JOIN
+          generate_series(
+            $1::timestamp,
+            $2::timestamp,
+            ('1 ' || $3)::interval
+          ) series
+        LEFT JOIN LATERAL (
+          SELECT id, price_usd, refreshed_at from rates
+            WHERE rates.currency_id = c.id AND refreshed_at <= series
+            ORDER BY rates.refreshed_at DESC
+            LIMIT 1
+        ) rates ON true
       GROUP BY series
     """
 

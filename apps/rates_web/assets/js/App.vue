@@ -17,9 +17,7 @@
   </ul>
 
   <pulse-loader class="Loader" :loading="isLoading"></pulse-loader>
-  <div>
-    <GChart type="LineChart" :data="chartData" :options="CHART_OPTIONS" />
-  </div>
+  <GChart type="LineChart" :data="chartData" :options="CHART_OPTIONS" />
 </div>
 </template>
 

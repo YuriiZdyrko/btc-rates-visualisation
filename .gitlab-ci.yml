@@ -65,15 +65,15 @@ test:dialyxir:
   allow_failure: true
 
 build:
-  image: docker:git
+  image: docker
   variables:
     DOCKER_DRIVER: overlay_fs
   stage: build
   before_script:
-    - docker version
+    - docker --version
   script:
     - docker login -u "$DOCKER_USER" -p "$DOCKER_PASSWORD"
-    - docker build --pull -t "banzay/rates" .
+    - docker build --pull -t "banzay/rates" -f Dockerfile.prod .
     - docker push banzay/rates:latest
     - docker image save -o rates-release.tar "banzay/rates"
   only:
