@@ -4,10 +4,7 @@ stages:
   - build
 
 variables:
-  POSTGRES_HOST: postgres
-  POSTGRES_DB: rates_test
-  POSTGRES_USER: postgres
-  POSTGRES_PASSWORD: ""
+  POSTGRES_PASSWORD: "postgres"
 
 .elixir: &elixir
   image: elixir
@@ -65,7 +62,7 @@ test:dialyxir:
   allow_failure: true
 
 build:
-  image: docker
+  image: docker:git
   variables:
     DOCKER_DRIVER: overlay_fs
   stage: build
