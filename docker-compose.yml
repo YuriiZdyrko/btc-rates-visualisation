@@ -1,0 +1,19 @@
+version: '3.2'
+services:
+  postgres:
+    image: postgres
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.prod
+    volumes:
+      - type: bind
+        source: .
+        target: /rates-app
+    ports:
+      - "80:4000"
+    depends_on:
+      - postgres
+    command:
+      - start
