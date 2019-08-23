@@ -40,7 +40,7 @@ test:exunit:
   <<: *elixir
   stage: test
   services:
-    - postgres:9.6
+    - postgres
   script:
     - mix test --cover --color
   artifacts:

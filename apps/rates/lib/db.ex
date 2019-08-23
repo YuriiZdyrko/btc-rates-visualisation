@@ -17,6 +17,7 @@ defmodule Rates.DB do
   end
 
   defp create_db do
+    IO.puts("TASK:DB:CREATE")
     result = Repo.__adapter__().storage_up(Repo.config())
 
     case result do
@@ -26,6 +27,7 @@ defmodule Rates.DB do
   end
 
   defp migrate_db do
+    IO.puts("TASK:DB:MIGRATE")
     Ecto.Migrator.with_repo(Repo, &Ecto.Migrator.run(&1, :up, all: true))
   end
 end

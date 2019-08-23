@@ -37,7 +37,7 @@ export default {
       unit: 'second',
       isLoading: null,
       duration: '1min',
-      REFRESH_RATE: 1000,
+      REFRESH_RATE: 3000,
       chartData: null,
       CHART_OPTIONS: {
         height: 600,
