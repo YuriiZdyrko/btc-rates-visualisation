@@ -8,7 +8,7 @@ Build and run release with minikube:
 
 minikube start
 kubectl create -f ./k8s/rates-deployment.yaml
-kubectl expose deployment rates-deployment --type=NodePort --port=4000
+kubectl expose deployment rates-deployment --type=NodePort --port=80
 minikube service rates-deployment --url
 
 

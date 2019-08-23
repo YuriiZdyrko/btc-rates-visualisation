@@ -13,12 +13,12 @@ spec:
         - name: rates
           image: banzay/rates
           ports:
-            - containerPort: 4000
+            - containerPort: 80
           args: ["start"]
           livenessProbe:
             httpGet:
               path: /api/health-check
-              port: 4000
+              port: 80
             initialDelaySeconds: 60
             periodSeconds: 15
 ---

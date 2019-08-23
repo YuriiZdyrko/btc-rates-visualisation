@@ -31,9 +31,9 @@ FROM alpine:3.10
 RUN apk upgrade --no-cache && \
   apk add --no-cache bash openssl
 
-EXPOSE 4000
+EXPOSE 80
 
-ENV PORT=4000 \
+ENV PORT=80 \
   MIX_ENV=prod \
   REPLACE_OS_VARS=true \
   SHELL=/bin/bash
